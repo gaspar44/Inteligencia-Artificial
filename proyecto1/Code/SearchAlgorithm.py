@@ -1,7 +1,7 @@
 # This file contains all the required routines to make an A* search algorithm.
 #
-__authors__ = 'TO_BE_FILLED'
-__group__ = 'TO_BE_FILLED'
+__authors__ = '1499617'
+__group__ = 'DM.18'
 
 # _________________________________________________________________________________________
 # Intel.ligencia Artificial
