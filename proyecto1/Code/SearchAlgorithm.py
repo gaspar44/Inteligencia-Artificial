@@ -32,10 +32,10 @@ def expand(path, map):
 
     for i in range(len(stations_who_connect)):
         path_to_return_base_element.append(stations_who_connect[i])
-        path_to_return.append(path_to_return_base_element)
+        path_to_return.append(Path(path_to_return_base_element))
         path_to_return_base_element = path.route.copy()
 
-    return Path(path_to_return)
+    return path_to_return
 
 
 def remove_cycles(path_list):
@@ -49,12 +49,12 @@ def remove_cycles(path_list):
     """
 
     removed_cycles_paths = []
-    for i in range(len(path_list.route)):
-        actual_element = path_list.route[i]
+    for i in range(len(path_list)):
+        actual_element = path_list[i].route
         if all(actual_element[x] not in actual_element[x + 1:] for x in range(len(actual_element))):
-            removed_cycles_paths.append(actual_element)
+            removed_cycles_paths.append(Path(actual_element))
 
-    return Path(removed_cycles_paths) if removed_cycles_paths else removed_cycles_paths
+    return removed_cycles_paths
 
 
 def insert_depth_first_search(expand_paths, list_of_path):
@@ -68,8 +68,8 @@ def insert_depth_first_search(expand_paths, list_of_path):
             list_of_path (LIST of Path Class): List of Paths where Expanded Path is inserted
     """
     if expand_paths:
-        for i in range(len(expand_paths.route)-1, -1, -1):
-            list_of_path.insert(0, expand_paths.route[i])
+        for i in range(len(expand_paths)-1, -1, -1):
+            list_of_path.insert(0, expand_paths[i].route)
 
     return list_of_path
 
@@ -108,8 +108,8 @@ def insert_breadth_first_search(expand_paths, list_of_path):
                list_of_path (LIST of Path Class): List of Paths where Expanded Path is inserted
     """
     if expand_paths:
-        for i in range(len(expand_paths.route)-1, -1, -1):
-            list_of_path.append(expand_paths.route[i])
+        for i in range(len(expand_paths)-1, -1, -1):
+            list_of_path.append(expand_paths[i].route)
 
     return list_of_path
 

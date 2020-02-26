@@ -71,7 +71,7 @@ class Path:
 
     def __eq__(self, other):
         if other is not None:
-            return self.route == other#.route # Error en este pto
+            return self.route == other.route # Error en este pto
 
     def update_h(self, h):
         self.h = h
