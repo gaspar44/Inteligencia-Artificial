@@ -243,6 +243,17 @@ def insert_cost_f(expand_paths, list_of_path):
     pass
 
 
+def min_distance_stations(candidates_to_min_distance):
+    smallest_value = np.min(list(candidates_to_min_distance.values()))
+    stationsID = []
+
+    for key in candidates_to_min_distance:
+        if candidates_to_min_distance[key] == smallest_value:
+            stationsID.append(key)
+
+    return stationsID
+
+
 def coord2station(coord, map):
     """
         From coordinates, it searches the closest station.
@@ -253,7 +264,14 @@ def coord2station(coord, map):
         Returns:
             possible_origins (list): List of the Indexes of stations, which corresponds to the closest station
     """
-    pass
+    candidates_to_min_distance = {}
+    for key in map.stations:
+        x_side = (coord[0] - map.stations[key]['x']) ** 2
+        y_side = (coord[1] - map.stations[key]['y']) ** 2
+        distance = math.sqrt(x_side + y_side)
+        candidates_to_min_distance[key] = distance
+
+    return min_distance_stations(candidates_to_min_distance)
 
 
 def Astar(origin_coor, dest_coor, map, type_preference=0):
