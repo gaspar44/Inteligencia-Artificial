@@ -7,4 +7,4 @@ if __name__ == '__main__':
     connections = read_cost_table(os.path.join(ROOT_FOLDER, 'Time.txt'))
     erMap.add_connection(connections)
     erPath = depth_first_search(2, 7, erMap)
-    print(erPath)
+    coord2station([300,111],erMap)

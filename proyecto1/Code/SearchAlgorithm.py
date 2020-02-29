@@ -12,6 +12,7 @@ __group__ = 'DM.18'
 
 from SubwayMap import *
 from utils import *
+import copy
 
 
 def expand(path, map):
@@ -25,18 +26,16 @@ def expand(path, map):
             path_list (list): List of paths that are connected to the given path.
     """
     element_to_start_search = path.last
-    stations_who_connect = map.connections[element_to_start_search].keys()
-    stations_who_connect = list(stations_who_connect)
     path_to_return = []
-    path_to_return_base_element = path.route.copy()
 
-    for i in range(len(stations_who_connect)):
-        path_to_return_base_element.append(stations_who_connect[i])
-        path_to_return.append(Path(path_to_return_base_element))
-        path_to_return_base_element = path.route.copy()
+    for key in map.connections[element_to_start_search]:
+        path_base_element = copy.deepcopy(path) if len(path.route) > 1 else Path(element_to_start_search)
+        path_base_element.add_route(key)
+        path_base_element.update_g(map.connections[element_to_start_search][key])
+        path_base_element.update_f()
+        path_to_return.append(path_base_element)
 
     return path_to_return
-
 
 def remove_cycles(path_list):
     """
@@ -67,11 +66,17 @@ def insert_depth_first_search(expand_paths, list_of_path):
         Returns:
             list_of_path (LIST of Path Class): List of Paths where Expanded Path is inserted
     """
+    list_of_path_to_return = []
+    if len(list_of_path) == 0:
+        return list_of_path_to_return
+
+    list_of_path.pop(0)
     if expand_paths:
         for i in range(len(expand_paths)-1, -1, -1):
-            list_of_path.insert(0, expand_paths[i].route)
+            auxPath = copy.deepcopy(expand_paths[i])
+            list_of_path_to_return.insert(0, auxPath)
 
-    return list_of_path
+    return list_of_path_to_return
 
 
 def depth_first_search(origin_id, destination_id, map):
@@ -85,14 +90,14 @@ def depth_first_search(origin_id, destination_id, map):
         Returns:
             list_of_path[0] (Path Class): the route that goes from origin_id to destination_id
     """
-    list_to_start = [[origin_id]]
+    list_to_start = [Path(origin_id)]
 
-    while destination_id not in list_to_start[0] or list_to_start[0] == []:
-        first_element_list = Path(list_to_start[0])
+    while len(list_to_start) == 0 or destination_id not in list_to_start[0].route:
+        first_element_list = list_to_start[0]
         expanded_path = expand(first_element_list, map)
         expanded_path = remove_cycles(expanded_path)
-        list_to_start.pop(0)
-        insert_depth_first_search(expanded_path, list_to_start)
+        list_of_paths = [first_element_list]
+        list_to_start = insert_depth_first_search(expanded_path, list_of_paths)
 
     return Path(list_to_start[0])
 
