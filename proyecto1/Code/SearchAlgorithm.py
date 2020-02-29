@@ -67,17 +67,15 @@ def insert_depth_first_search(expand_paths, list_of_path):
         Returns:
             list_of_path (LIST of Path Class): List of Paths where Expanded Path is inserted
     """
-    list_of_path_to_return = []
+    list_of_path_to_return = copy.deepcopy(list_of_path)
+    list_of_path_to_return.pop(0)
+
     if expand_paths:
         for i in range(len(expand_paths)-1, -1, -1):
             auxPath = copy.deepcopy(expand_paths[i])
             list_of_path_to_return.insert(0, auxPath)
-        return list_of_path_to_return
 
-    else:
-        list_of_path_to_return = copy.deepcopy(list_of_path)
-        list_of_path_to_return.pop(0)
-        return list_of_path_to_return
+    return list_of_path_to_return
 
 
 def depth_first_search(origin_id, destination_id, map):
