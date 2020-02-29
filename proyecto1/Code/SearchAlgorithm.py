@@ -51,7 +51,8 @@ def remove_cycles(path_list):
     for i in range(len(path_list)):
         actual_element = path_list[i].route
         if all(actual_element[x] not in actual_element[x + 1:] for x in range(len(actual_element))):
-            removed_cycles_paths.append(Path(actual_element))
+            auxiliar_path = copy.deepcopy(path_list[i])
+            removed_cycles_paths.append(auxiliar_path)
 
     return removed_cycles_paths
 
@@ -70,13 +71,16 @@ def insert_depth_first_search(expand_paths, list_of_path):
     if len(list_of_path) == 0:
         return list_of_path_to_return
 
-    list_of_path.pop(0)
     if expand_paths:
         for i in range(len(expand_paths)-1, -1, -1):
             auxPath = copy.deepcopy(expand_paths[i])
             list_of_path_to_return.insert(0, auxPath)
+        return list_of_path_to_return
 
-    return list_of_path_to_return
+    else:
+        list_of_path_to_return = copy.deepcopy(list_of_path)
+        list_of_path_to_return.pop(0)
+        return list_of_path_to_return
 
 
 def depth_first_search(origin_id, destination_id, map):
@@ -90,16 +94,15 @@ def depth_first_search(origin_id, destination_id, map):
         Returns:
             list_of_path[0] (Path Class): the route that goes from origin_id to destination_id
     """
-    list_to_start = [Path(origin_id)]
+    list_of_path = [Path(origin_id)]
 
-    while len(list_to_start) == 0 or destination_id not in list_to_start[0].route:
-        first_element_list = list_to_start[0]
+    while len(list_of_path) != 0 and destination_id not in list_of_path[0].route:
+        first_element_list = list_of_path[0]
         expanded_path = expand(first_element_list, map)
         expanded_path = remove_cycles(expanded_path)
-        list_of_paths = [first_element_list]
-        list_to_start = insert_depth_first_search(expanded_path, list_of_paths)
+        list_of_path = insert_depth_first_search(expanded_path, list_of_path)
 
-    return Path(list_to_start[0])
+    return list_of_path[0]
 
 
 def insert_breadth_first_search(expand_paths, list_of_path):
