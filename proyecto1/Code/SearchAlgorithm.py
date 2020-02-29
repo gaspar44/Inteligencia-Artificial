@@ -68,9 +68,6 @@ def insert_depth_first_search(expand_paths, list_of_path):
             list_of_path (LIST of Path Class): List of Paths where Expanded Path is inserted
     """
     list_of_path_to_return = []
-    if len(list_of_path) == 0:
-        return list_of_path_to_return
-
     if expand_paths:
         for i in range(len(expand_paths)-1, -1, -1):
             auxPath = copy.deepcopy(expand_paths[i])
@@ -115,11 +112,15 @@ def insert_breadth_first_search(expand_paths, list_of_path):
            Returns:
                list_of_path (LIST of Path Class): List of Paths where Expanded Path is inserted
     """
+    list_of_path_to_return = copy.deepcopy(list_of_path)
+    list_of_path_to_return.pop(0)
+
     if expand_paths:
         for i in range(len(expand_paths)-1, -1, -1):
-            list_of_path.append(expand_paths[i].route)
+            auxPath = copy.deepcopy(expand_paths[i])
+            list_of_path_to_return.append(auxPath)
 
-    return list_of_path
+    return list_of_path_to_return
 
 
 def breadth_first_search(origin_id, destination_id, map):
@@ -133,17 +134,16 @@ def breadth_first_search(origin_id, destination_id, map):
         Returns:
             list_of_path[0] (Path Class): The route that goes from origin_id to destination_id
     """
-    list_to_start = [[origin_id]]
 
-    while destination_id not in list_to_start[0] or list_to_start[0] == []:
-        first_element_list = Path(list_to_start[0])
+    list_of_path = [Path(origin_id)]
+
+    while len(list_of_path) != 0 and destination_id not in list_of_path[0].route:
+        first_element_list = list_of_path[0]
         expanded_path = expand(first_element_list, map)
         expanded_path = remove_cycles(expanded_path)
-        list_to_start.pop(0)
-        insert_breadth_first_search(expanded_path, list_to_start)
+        list_of_path = insert_breadth_first_search(expanded_path, list_of_path)
 
-    return Path(list_to_start[0])
-
+    return list_of_path[0]
 
 def calculate_cost(expand_paths, map, type_preference=0):
     """
