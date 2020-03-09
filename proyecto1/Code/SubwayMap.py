@@ -77,7 +77,7 @@ class Path:
         self.h = h
 
     def update_g(self, g):
-        self.g += g
+            self.g += g
 
     def update_f(self):
         self.f = self.g + self.h

@@ -99,11 +99,11 @@ class TestCases(unittest.TestCase):
     def test_calculate_heuristics(self):
         expanded_paths = [Path([12, 8, 7]), Path([12, 8, 9]), Path([12, 8, 13])]
         updated_paths = calculate_heuristics(expanded_paths, self.map, destination_id=9, type_preference=0)
-        self.assertEqual([path.h for path in updated_paths], [0, 0, 0])
+        self.assertEqual([path.h for path in updated_paths], [1, 0, 1])
 
         expanded_paths = [Path([12, 8, 7]), Path([12, 8, 9]), Path([12, 8, 13])]
         updated_paths = calculate_heuristics(expanded_paths, self.map, destination_id=9, type_preference=1)
-        self.assertEqual([path.h for path in updated_paths], [5.960756012864304, 0.0, 9.410396142328736])
+        self.assertEqual([path.h for path in updated_paths], [1.8544574262244504, 0.0, 0.6273597428219158])
 
         expanded_paths = [Path([12, 8, 7]), Path([12, 8, 9]), Path([12, 8, 13])]
         updated_paths = calculate_heuristics(expanded_paths, self.map, destination_id=9, type_preference=2)
@@ -132,14 +132,14 @@ class TestCases(unittest.TestCase):
         # these are the paths you have to check
         list_of_path = [path_1, path_2, path_3]
         # this the expanded path of path_1
-        expand_paths = [self.create_path_with_g([12, 8, 7, 13], 124.52), self.create_path_with_g([12, 8, 7, 15], 222.52)]
+        expand_paths = [self.create_path_with_g([12, 8, 7, 11], 124.52), self.create_path_with_g([12, 8, 7, 15], 222.52)]
         # Now imagine you have the cost dictionary
-        cost_dict = {11: 235.9998, 13: 0, 7: 169.04692, 9: 70.46227999999999, 15: 400}
+        cost_dict = {13: 0, 7: 169.04692, 9: 235.23, 15: 400, 11: 350.12}
         new_paths, list_of_path_removed, _ = remove_redundant_paths(expand_paths, list_of_path, cost_dict)
         # If you would like to print the paths uncomment the line below
-        # self.print_paths(new_paths, list_of_path_removed)
+        self.print_paths(new_paths, list_of_path_removed)
         self.assertEqual(list_of_path_removed, [path_1, path_2])
-        self.assertEqual(new_paths, expand_paths[1:])
+        self.assertEqual(new_paths, expand_paths)
 
         cost_dict = {11: 350.12, 13: 0, 7: 84.52, 9: 235.23, 15: 200.10}
         expand_paths = [self.create_path_with_g([12, 8, 7, 11], 124.52),

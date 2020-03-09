@@ -31,8 +31,8 @@ def expand(path, map):
     for key in map.connections[element_to_start_search]:
         path_base_element = copy.deepcopy(path) if len(path.route) > 1 else Path(element_to_start_search)
         path_base_element.add_route(key)
-        path_base_element.update_g(map.connections[element_to_start_search][key])
-        path_base_element.update_f()
+        #path_base_element.update_g(map.connections[element_to_start_search][key])
+        #path_base_element.update_f()
         path_to_return.append(path_base_element)
 
     return path_to_return
@@ -158,7 +158,35 @@ def calculate_cost(expand_paths, map, type_preference=0):
             Returns:
                 expand_paths (LIST of Paths): Expanded path with updated cost
     """
-    pass
+    if type_preference == 0:
+        for i in range(len(expand_paths)):
+            expand_paths[i].update_g(len(expand_paths[i].route) - 1)
+
+    elif type_preference == 1:
+        for path in expand_paths:
+            for i in range(1, len(path.route)):
+                first_dictionary = map.connections[path.route[i - 1]]
+                value_to_update = first_dictionary[path.route[i]]
+                path.update_g(value_to_update)
+
+    elif type_preference == 2:
+        for path in expand_paths:
+            for i in range(1,len(path.route)):
+                first_dictionary = map.stations
+                # TODO
+
+    elif type_preference == 3:
+        for path in expand_paths:
+            lines_visited_until_now = [map.stations[path.route[0]]["line"]]
+
+            for i in range(1,len(path.route)):
+                first_dictionary = map.stations[path.route[i]]
+                if first_dictionary["line"] not in lines_visited_until_now:
+                    lines_visited_until_now.append(first_dictionary["line"])
+
+            path.update_g(len(lines_visited_until_now) - 1)
+
+    return expand_paths
 
 
 def insert_cost(expand_paths, list_of_path):
@@ -171,7 +199,13 @@ def insert_cost(expand_paths, list_of_path):
            Returns:
                list_of_path (LIST of Path Class): List of Paths where expanded_path is inserted according to cost
     """
-    pass
+    list_of_path_to_return = copy.deepcopy(list_of_path)
+    list_of_path_to_return.pop()
+
+    list_of_path_to_return = list_of_path_to_return + expand_paths
+    list_of_path_to_return = sorted(list_of_path_to_return, key=lambda path: path.g)
+    return list_of_path_to_return
+
 
 
 def uniform_cost_search(origin_id, destination_id, map, type_preference=0):
@@ -185,7 +219,17 @@ def uniform_cost_search(origin_id, destination_id, map, type_preference=0):
         Returns:
             list_of_path[0] (Path Class): The route that goes from origin_id to destination_id
     """
-    pass
+
+    list_of_path = [Path(origin_id)]
+
+    while len(list_of_path) != 0 and destination_id not in list_of_path[0].route:
+        first_element_list = list_of_path[0]
+        expanded_path = expand(first_element_list, map)
+        expanded_path = remove_cycles(expanded_path)
+        expanded_path = calculate_cost(expanded_path, map, type_preference)
+        list_of_path = insert_cost(expanded_path, list_of_path)
+
+    return list_of_path[0]
 
 
 def calculate_heuristics(expand_paths, map, destination_id, type_preference=0):
