@@ -158,9 +158,10 @@ def calculate_cost(expand_paths, map, type_preference=0):
             Returns:
                 expand_paths (LIST of Paths): Expanded path with updated cost
     """
-    if type_preference == 0:
+    if type_preference == 0:  # Sólo importan las conexiones hechas booleano de si estoy o no para la heuristica
         for i in range(len(expand_paths)):
-            expand_paths[i].update_g(len(expand_paths[i].route) - 1)
+            expand_paths[i].update_g(1)
+            # FIXME
 
     elif type_preference == 1:
         for path in expand_paths:
@@ -171,20 +172,25 @@ def calculate_cost(expand_paths, map, type_preference=0):
 
     elif type_preference == 2:
         for path in expand_paths:
-            for i in range(1,len(path.route)):
-                first_dictionary = map.stations
-                # TODO
+            for i in range(1, len(path.route)):
+                first_dictionary = map.connections[path.route[i - 1]]
+                travel_time = first_dictionary[path.route[i]]
+                actual_subway_line = map.stations[path.route[i]]["line"]
+                velocity = map.velocity[actual_subway_line]
+                distance = travel_time * velocity
+                path.update_g(distance)
+                # FIXME
 
     elif type_preference == 3:
         for path in expand_paths:
             lines_visited_until_now = [map.stations[path.route[0]]["line"]]
 
-            for i in range(1,len(path.route)):
+            for i in range(1, len(path.route)):
                 first_dictionary = map.stations[path.route[i]]
                 if first_dictionary["line"] not in lines_visited_until_now:
                     lines_visited_until_now.append(first_dictionary["line"])
 
-            path.update_g(len(lines_visited_until_now) - 1)
+            path.update_g(len(lines_visited_until_now)-1)
 
     return expand_paths
 
@@ -199,13 +205,17 @@ def insert_cost(expand_paths, list_of_path):
            Returns:
                list_of_path (LIST of Path Class): List of Paths where expanded_path is inserted according to cost
     """
-    list_of_path_to_return = copy.deepcopy(list_of_path)
-    list_of_path_to_return.pop()
 
-    list_of_path_to_return = list_of_path_to_return + expand_paths
+    list_of_path_to_return = copy.deepcopy(list_of_path)
+    list_of_path_to_return.pop(0)
+
+    if expand_paths:
+        for i in range(len(expand_paths)-1, -1, -1):
+            auxPath = copy.deepcopy(expand_paths[i])
+            list_of_path_to_return.append(auxPath)
+
     list_of_path_to_return = sorted(list_of_path_to_return, key=lambda path: path.g)
     return list_of_path_to_return
-
 
 
 def uniform_cost_search(origin_id, destination_id, map, type_preference=0):
