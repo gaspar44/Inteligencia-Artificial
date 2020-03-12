@@ -31,8 +31,6 @@ def expand(path, map):
     for key in map.connections[element_to_start_search]:
         path_base_element = copy.deepcopy(path) if len(path.route) > 1 else Path(element_to_start_search)
         path_base_element.add_route(key)
-        #path_base_element.update_g(map.connections[element_to_start_search][key])
-        #path_base_element.update_f()
         path_to_return.append(path_base_element)
 
     return path_to_return
@@ -51,8 +49,7 @@ def remove_cycles(path_list):
     for i in range(len(path_list)):
         actual_element = path_list[i].route
         if all(actual_element[x] not in actual_element[x + 1:] for x in range(len(actual_element))):
-            auxiliar_path = copy.deepcopy(path_list[i])
-            removed_cycles_paths.append(auxiliar_path)
+            removed_cycles_paths.append(path_list[i])
 
     return removed_cycles_paths
 
@@ -72,8 +69,7 @@ def insert_depth_first_search(expand_paths, list_of_path):
 
     if expand_paths:
         for i in range(len(expand_paths)-1, -1, -1):
-            auxPath = copy.deepcopy(expand_paths[i])
-            list_of_path_to_return.insert(0, auxPath)
+            list_of_path_to_return.insert(0, expand_paths[i])
 
     return list_of_path_to_return
 
@@ -115,8 +111,7 @@ def insert_breadth_first_search(expand_paths, list_of_path):
 
     if expand_paths:
         for i in range(len(expand_paths)-1, -1, -1):
-            auxPath = copy.deepcopy(expand_paths[i])
-            list_of_path_to_return.append(auxPath)
+            list_of_path_to_return.append(expand_paths[i])
 
     return list_of_path_to_return
 
@@ -159,9 +154,8 @@ def calculate_cost(expand_paths, map, type_preference=0):
                 expand_paths (LIST of Paths): Expanded path with updated cost
     """
     if type_preference == 0:  # Sólo importan las conexiones hechas booleano de si estoy o no para la heuristica
-        for i in range(len(expand_paths)):
-            expand_paths[i].update_g(1)
-            # FIXME
+        for path in expand_paths:
+            path.update_g(1)
 
     elif type_preference == 1:
         for path in expand_paths:
@@ -210,9 +204,8 @@ def insert_cost(expand_paths, list_of_path):
     list_of_path_to_return.pop(0)
 
     if expand_paths:
-        for i in range(len(expand_paths)-1, -1, -1):
-            auxPath = copy.deepcopy(expand_paths[i])
-            list_of_path_to_return.append(auxPath)
+        for i in range(len(expand_paths)):
+            list_of_path_to_return.append(expand_paths[i])
 
     list_of_path_to_return = sorted(list_of_path_to_return, key=lambda path: path.g)
     return list_of_path_to_return
