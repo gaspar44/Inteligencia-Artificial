@@ -171,9 +171,12 @@ def calculate_cost(expand_paths, map, type_preference=0):
                 travel_time = first_dictionary[path.route[i]]
                 actual_subway_line = map.stations[path.route[i]]["line"]
                 velocity = map.velocity[actual_subway_line]
-                distance = travel_time * velocity
+
+                previous_subway_line_name = map.stations[path.route[i-1]]["name"]
+                actual_subway_line_name = map.stations[path.route[i]]["name"]
+
+                distance = travel_time * velocity if actual_subway_line_name != previous_subway_line_name else 0
                 path.update_g(distance)
-                # FIXME
 
     elif type_preference == 3:
         for path in expand_paths:
@@ -184,7 +187,7 @@ def calculate_cost(expand_paths, map, type_preference=0):
                 if first_dictionary["line"] not in lines_visited_until_now:
                     lines_visited_until_now.append(first_dictionary["line"])
 
-            path.update_g(len(lines_visited_until_now)-1)
+            path.update_g(len(lines_visited_until_now) - 1)
 
     return expand_paths
 
@@ -252,7 +255,12 @@ def calculate_heuristics(expand_paths, map, destination_id, type_preference=0):
         Returns:
             expand_paths (LIST of Path Class): Expanded paths with updated heuristics
     """
-    pass
+
+    if type_preference == 0:
+        for path in expand_paths:
+            path.update_h(0) if path.last == destination_id else path.update_h(1)
+
+    return expand_paths
 
 
 def update_f(expand_paths):
