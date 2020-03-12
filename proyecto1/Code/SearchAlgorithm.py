@@ -153,7 +153,7 @@ def calculate_cost(expand_paths, map, type_preference=0):
             Returns:
                 expand_paths (LIST of Paths): Expanded path with updated cost
     """
-    if type_preference == 0:  # Sólo importan las conexiones hechas booleano de si estoy o no para la heuristica
+    if type_preference == 0:
         for path in expand_paths:
             path.update_g(1)
 
