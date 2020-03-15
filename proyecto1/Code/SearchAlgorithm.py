@@ -171,11 +171,21 @@ def calculate_cost(expand_paths, map, type_preference=0):
             travel_time = first_dictionary[path.last]
             actual_subway_line = map.stations[path.last]["line"]
             velocity = map.velocity[actual_subway_line]
+
             previous_subway_line_name = map.stations[path.penultimate]["name"]
             actual_subway_line_name = map.stations[path.last]["name"]
-
             distance = travel_time * velocity if actual_subway_line_name != previous_subway_line_name else 0
             path.update_g(distance)
+            #for i in range(1, len(path.route)):
+            #    first_dictionary = map.connections[path.route[i - 1]]
+            #    travel_time = first_dictionary[path.route[i]]
+            #    actual_subway_line = map.stations[path.route[i]]["line"]
+            #    velocity = map.velocity[actual_subway_line]
+
+            #   previous_subway_line_name = map.stations[path.route[i - 1]]["name"]
+             #   actual_subway_line_name = map.stations[path.route[i]]["name"]
+              #  distance = travel_time * velocity if actual_subway_line_name != previous_subway_line_name else 0
+            # path.update_g(distance)
 
     elif type_preference == 3:
         for path in expand_paths:
