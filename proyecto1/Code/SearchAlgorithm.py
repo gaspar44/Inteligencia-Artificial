@@ -9,6 +9,7 @@ __group__ = 'DM.18'
 # Curs 2016- 2017
 # Universitat Autonoma de Barcelona
 # _______________________________________________________________________________________
+from sympy import elliptic_e
 
 from SubwayMap import *
 from utils import *
@@ -260,6 +261,19 @@ def calculate_heuristics(expand_paths, map, destination_id, type_preference=0):
         for path in expand_paths:
             path.update_h(0) if path.last == destination_id else path.update_h(1)
 
+    elif type_preference == 1 or type_preference == 2:
+        for path in expand_paths:
+            max_speed = max(map.velocity.values())
+            coord_of_destination_station = [map.stations[destination_id]["x"], map.stations[destination_id]["y"]]
+            distance = calculate_distance(coord_of_destination_station, path.last, map)
+            velocity = distance/max_speed
+            path.update_h(velocity) if type_preference == 1 else path.update_h(distance)
+
+    elif type_preference == 3:
+        destination_line = map.stations[destination_id]["line"]
+        for path in expand_paths:
+            path.update_h(0) if destination_line == map.stations[path.last]["line"] else path.update_h(1)
+
     return expand_paths
 
 
@@ -272,7 +286,19 @@ def update_f(expand_paths):
          Returns:
              expand_paths (LIST of Path Class): Expanded paths with updated costs
     """
-    pass
+
+    for path in expand_paths:
+        path.update_f()
+
+    return expand_paths
+
+
+def fix_useless_path(last, new_paths):
+    for path in new_paths:
+        if last in path.route:
+            new_paths.remove(path)
+
+    return new_paths
 
 
 def remove_redundant_paths(expand_paths, list_of_path, visited_stations_cost):
@@ -288,7 +314,20 @@ def remove_redundant_paths(expand_paths, list_of_path, visited_stations_cost):
              new_paths (LIST of Path Class): Expanded paths without redundant paths
              list_of_path (LIST of Path Class): list_of_path without redundant paths
     """
-    pass
+    new_paths = copy.deepcopy(list_of_path)
+
+    for path in expand_paths:
+        if path.last not in visited_stations_cost:
+            visited_stations_cost[path.last] = path.g
+
+        elif path.g < visited_stations_cost[path.last]:
+            visited_stations_cost[path.last] = path.g
+            new_paths = fix_useless_path(path.last, new_paths)
+
+        else:
+            expand_paths.remove(path)
+
+    return expand_paths, new_paths, visited_stations_cost
 
 
 def insert_cost_f(expand_paths, list_of_path):
@@ -315,6 +354,12 @@ def min_distance_stations(candidates_to_min_distance):
     return stationsID
 
 
+def calculate_distance(coord, key, map):
+    x_side = (coord[0] - map.stations[key]['x']) ** 2
+    y_side = (coord[1] - map.stations[key]['y']) ** 2
+    return math.sqrt(x_side + y_side)
+
+
 def coord2station(coord, map):
     """
         From coordinates, it searches the closest station.
@@ -327,9 +372,7 @@ def coord2station(coord, map):
     """
     candidates_to_min_distance = {}
     for key in map.stations:
-        x_side = (coord[0] - map.stations[key]['x']) ** 2
-        y_side = (coord[1] - map.stations[key]['y']) ** 2
-        distance = math.sqrt(x_side + y_side)
+        distance = calculate_distance(coord, key, map)
         candidates_to_min_distance[key] = distance
 
     return min_distance_stations(candidates_to_min_distance)

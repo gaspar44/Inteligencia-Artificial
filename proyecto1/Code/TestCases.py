@@ -138,6 +138,7 @@ class TestCases(unittest.TestCase):
         new_paths, list_of_path_removed, _ = remove_redundant_paths(expand_paths, list_of_path, cost_dict)
         # If you would like to print the paths uncomment the line below
         self.print_paths(new_paths, list_of_path_removed)
+        self.print_paths(list_of_path_removed, [path_1,path_2])
         self.assertEqual(list_of_path_removed, [path_1, path_2])
         self.assertEqual(new_paths, expand_paths)
 
