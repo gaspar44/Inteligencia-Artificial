@@ -10,7 +10,6 @@ if __name__ == '__main__':
     infoVelocity_clean = read_information(os.path.join(ROOT_FOLDER, 'InfoVelocity.txt'))
     erMap.add_velocity(infoVelocity_clean)
 
-    erPath = depth_first_search(2, 7, erMap)
-    list_of_path = [Path([12, 8, 3])]
-    expanded_path = calculate_cost(list_of_path, erMap, 3)
-    print(expanded_path[0].g)
+    origin_id = [108, 206]
+    destination_id = [67, 79]
+    Astar(origin_id,destination_id,erMap,1)

@@ -35,6 +35,7 @@ def expand(path, map):
 
     return path_to_return
 
+
 def remove_cycles(path_list):
     """
      It removes from path_list the set of paths that include some cycles in their path.
@@ -68,7 +69,7 @@ def insert_depth_first_search(expand_paths, list_of_path):
     list_of_path_to_return.pop(0)
 
     if expand_paths:
-        for i in range(len(expand_paths)-1, -1, -1):
+        for i in range(len(expand_paths) - 1, -1, -1):
             list_of_path_to_return.insert(0, expand_paths[i])
 
     return list_of_path_to_return
@@ -110,7 +111,7 @@ def insert_breadth_first_search(expand_paths, list_of_path):
     list_of_path_to_return.pop(0)
 
     if expand_paths:
-        for i in range(len(expand_paths)-1, -1, -1):
+        for i in range(len(expand_paths) - 1, -1, -1):
             list_of_path_to_return.append(expand_paths[i])
 
     return list_of_path_to_return
@@ -138,6 +139,7 @@ def breadth_first_search(origin_id, destination_id, map):
 
     return list_of_path[0]
 
+
 def calculate_cost(expand_paths, map, type_preference=0):
     """
          Calculate the cost according to type preference
@@ -159,33 +161,28 @@ def calculate_cost(expand_paths, map, type_preference=0):
 
     elif type_preference == 1:
         for path in expand_paths:
-            for i in range(1, len(path.route)):
-                first_dictionary = map.connections[path.route[i - 1]]
-                value_to_update = first_dictionary[path.route[i]]
-                path.update_g(value_to_update)
+            first_dictionary = map.connections[path.penultimate]
+            value_to_update = first_dictionary[path.last]
+            path.update_g(value_to_update)
 
     elif type_preference == 2:
         for path in expand_paths:
-            for i in range(1, len(path.route)):
-                first_dictionary = map.connections[path.route[i - 1]]
-                travel_time = first_dictionary[path.route[i]]
-                actual_subway_line = map.stations[path.route[i]]["line"]
-                velocity = map.velocity[actual_subway_line]
+            first_dictionary = map.connections[path.penultimate]
+            travel_time = first_dictionary[path.last]
+            actual_subway_line = map.stations[path.last]["line"]
+            velocity = map.velocity[actual_subway_line]
+            previous_subway_line_name = map.stations[path.penultimate]["name"]
+            actual_subway_line_name = map.stations[path.last]["name"]
 
-                previous_subway_line_name = map.stations[path.route[i-1]]["name"]
-                actual_subway_line_name = map.stations[path.route[i]]["name"]
-
-                distance = travel_time * velocity if actual_subway_line_name != previous_subway_line_name else 0
-                path.update_g(distance)
+            distance = travel_time * velocity if actual_subway_line_name != previous_subway_line_name else 0
+            path.update_g(distance)
 
     elif type_preference == 3:
         for path in expand_paths:
-            lines_visited_until_now = [map.stations[path.route[0]]["line"]]
-
-            for i in range(1, len(path.route)):
-                first_dictionary = map.stations[path.route[i]]
-                if first_dictionary["line"] not in lines_visited_until_now:
-                    lines_visited_until_now.append(first_dictionary["line"])
+            lines_visited_until_now = [map.stations[path.head]["line"]]
+            first_dictionary = map.stations[path.last]
+            if first_dictionary["line"] not in lines_visited_until_now:
+                lines_visited_until_now.append(first_dictionary["line"])
 
             path.update_g(len(lines_visited_until_now) - 1)
 
@@ -265,7 +262,7 @@ def calculate_heuristics(expand_paths, map, destination_id, type_preference=0):
             max_speed = max(map.velocity.values())
             coord_of_destination_station = [map.stations[destination_id]["x"], map.stations[destination_id]["y"]]
             distance = calculate_distance(coord_of_destination_station, path.last, map)
-            velocity = distance/max_speed
+            velocity = distance / max_speed
             path.update_h(velocity) if type_preference == 1 else path.update_h(distance)
 
     elif type_preference == 3:
@@ -292,7 +289,7 @@ def update_f(expand_paths):
     return expand_paths
 
 
-def fix_useless_path(last, new_paths):
+def fix_path(last, new_paths):
     for path in new_paths:
         if last in path.route:
             new_paths.remove(path)
@@ -321,7 +318,7 @@ def remove_redundant_paths(expand_paths, list_of_path, visited_stations_cost):
 
         elif path.g < visited_stations_cost[path.last]:
             visited_stations_cost[path.last] = path.g
-            new_paths = fix_useless_path(path.last, new_paths)
+            new_paths = fix_path(path.last, new_paths)
 
         else:
             expand_paths.remove(path)
@@ -339,7 +336,15 @@ def insert_cost_f(expand_paths, list_of_path):
            Returns:
                list_of_path (LIST of Path Class): List of Paths where expanded_path is inserted according to f
     """
-    pass
+    list_of_path_to_return = copy.deepcopy(list_of_path)
+    list_of_path_to_return.pop(0)
+
+    if expand_paths:
+        for i in range(len(expand_paths)):
+            list_of_path_to_return.append(expand_paths[i])
+
+    list_of_path_to_return = sorted(list_of_path_to_return, key=lambda path: path.f)
+    return list_of_path_to_return
 
 
 def min_distance_stations(candidates_to_min_distance):
@@ -377,6 +382,14 @@ def coord2station(coord, map):
     return min_distance_stations(candidates_to_min_distance)
 
 
+def get_nodeID_by_coordinate(origin_coor, map):
+    for key, value in map.stations.items():
+        if value["x"] == origin_coor[0] and value["y"] == origin_coor[1]:
+            return key
+
+    return None
+
+
 def Astar(origin_coor, dest_coor, map, type_preference=0):
     """
      A* Search algorithm
@@ -394,14 +407,24 @@ def Astar(origin_coor, dest_coor, map, type_preference=0):
             list_of_path[0] (Path Class): The route that goes from origin_id to destination_id
     """
 
+    origin_id = get_nodeID_by_coordinate(origin_coor, map)
+    destination_id = get_nodeID_by_coordinate(dest_coor, map)
+    cost_dictionary = {}
+
+    if origin_id is None or destination_id is None:
+        return Path(-1)
+
     list_of_path = [Path(origin_id)]
 
     while len(list_of_path) != 0 and destination_id not in list_of_path[0].route:
         first_element_list = list_of_path[0]
         expanded_path = expand(first_element_list, map)
         expanded_path = remove_cycles(expanded_path)
+
         expanded_path = calculate_cost(expanded_path, map, type_preference)
-        list_of_path = insert_cost(expanded_path, list_of_path)
+        expanded_path = calculate_heuristics(expanded_path, map, destination_id, type_preference)
+        expanded_path = update_f(expanded_path)
+        list_of_path = insert_cost_f(expanded_path, list_of_path)
+        expanded_path, list_of_path, cost_dictionary = remove_redundant_paths(expanded_path, list_of_path, cost_dictionary)
 
     return list_of_path[0]
-    pass

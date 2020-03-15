@@ -165,12 +165,12 @@ class TestCases(unittest.TestCase):
         # If you want to see the optimal_path's route and f-cost,
         # uncomment the print functions below
         optimal_path = Astar([108, 206], [67, 79], self.map, 0)
-        # print(optimal_path.route, optimal_path.f)
+        print(optimal_path.route, optimal_path.f)
         self.assertEqual(optimal_path, Path([8, 7, 6, 5, 2, 1]))
         self.assertEqual(optimal_path.f, 5)
 
         optimal_path = Astar([140, 56], [140, 115], self.map, 1)
-        # print(optimal_path.route, optimal_path.f)
+        print(optimal_path.route, optimal_path.f)
         self.assertEqual(optimal_path, Path([2, 5, 6]))
         self.assertEqual(optimal_path.f, 27.14286)
 
@@ -180,7 +180,7 @@ class TestCases(unittest.TestCase):
         self.assertEqual(optimal_path.f, 326.53992)
 
         optimal_path = Astar([167, 64], [152, 230], self.map, 3)
-        # print(optimal_path.route, optimal_path.f)
+        #print(optimal_path.route, optimal_path.f)
         self.assertEqual(optimal_path, Path([3, 2, 10, 11, 12, 13, 14]))
         self.assertEqual(optimal_path.f, 2)
 
