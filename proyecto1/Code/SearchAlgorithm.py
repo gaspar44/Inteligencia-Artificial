@@ -9,7 +9,6 @@ __group__ = 'DM.18'
 # Curs 2016- 2017
 # Universitat Autonoma de Barcelona
 # _______________________________________________________________________________________
-from sympy import elliptic_e
 
 from SubwayMap import *
 from utils import *
@@ -394,4 +393,15 @@ def Astar(origin_coor, dest_coor, map, type_preference=0):
         Returns:
             list_of_path[0] (Path Class): The route that goes from origin_id to destination_id
     """
+
+    list_of_path = [Path(origin_id)]
+
+    while len(list_of_path) != 0 and destination_id not in list_of_path[0].route:
+        first_element_list = list_of_path[0]
+        expanded_path = expand(first_element_list, map)
+        expanded_path = remove_cycles(expanded_path)
+        expanded_path = calculate_cost(expanded_path, map, type_preference)
+        list_of_path = insert_cost(expanded_path, list_of_path)
+
+    return list_of_path[0]
     pass
