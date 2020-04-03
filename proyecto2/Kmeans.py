@@ -79,15 +79,15 @@ class KMeans:
         #######################################################
         if self.options['km_init'].lower() == 'first':
             arrays_to_find = self.K
-            different_elements = [self.X[0].tolist()]
+            different_elements = self.X[0]
 
             for i in range(1, self.X.shape[0]):
-                compare_element = self.X[i].tolist()
-                if compare_element not in different_elements:
-                    different_elements.append(compare_element)
+                mask = np.array_equal(different_elements,self.X[i])
+                if not np.all(mask):
+                    different_elements = np.append(different_elements,self.X[i])
                     arrays_to_find = arrays_to_find - 1
                     if arrays_to_find == 0:
-                        self.centroids = np.array(different_elements)
+                        self.centroids = different_elements.reshape(different_elements.shape[0]//self.X.shape[1],self.X.shape[1])
                         self.old_centroids = None
                         return
         else:
