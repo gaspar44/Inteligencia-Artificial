@@ -1,6 +1,8 @@
 __authors__ = ['1499617']
 __group__ = 'DM.18'
 
+from calendar import different_locale
+
 import numpy as np
 import utils
 
@@ -76,14 +78,18 @@ class KMeans:
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
         if self.options['km_init'].lower() == 'first':
-            #np.unique(matriz)
-            '''
-            Iterar sobre cada una de las filas es una idea 
-            luego hacer un resize(de alguna forma mistica) y eliminar lo que sobre
-            en algún pto fusionar.
-            '''
-            self.centroids = np.random.rand(self.K, self.X.shape[1])
-            self.old_centroids = np.random.rand(self.K, self.X.shape[1])
+            arrays_to_find = self.K
+            different_elements = [self.X[0].tolist()]
+
+            for i in range(1, self.X.shape[0]):
+                compare_element = self.X[i].tolist()
+                if compare_element not in different_elements:
+                    different_elements.append(compare_element)
+                    arrays_to_find = arrays_to_find - 1
+                    if arrays_to_find == 0:
+                        self.centroids = np.array(different_elements)
+                        self.old_centroids = None
+                        return
         else:
             self.centroids = np.random.rand(self.K, self.X.shape[1])
             self.old_centroids = np.random.rand(self.K, self.X.shape[1])
