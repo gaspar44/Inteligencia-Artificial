@@ -90,7 +90,7 @@ class KMeans:
                         different_elements_list.append(element_as_list)
                         different_elements = np.append(different_elements,self.X[i])
                         arrays_to_find = arrays_to_find - 1
-                        if arrays_to_find == 0:
+                        if arrays_to_find <= 0:
                             self.centroids = different_elements.reshape(different_elements.shape[0]//self.X.shape[1], self.X.shape[1])
                             self.old_centroids = None
                             return
