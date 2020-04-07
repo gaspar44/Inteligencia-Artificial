@@ -178,6 +178,17 @@ def distance(X, C):
     ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
     ##  AND CHANGE FOR YOUR OWN CODE
     #########################################################
+    distances_to_return = []
+    for i in range(X.shape[0]):
+        distances_found = []
+        for j in range(C.shape[0]):
+            distance = np.linalg.norm(C[j]-X[i])
+            distances_found.append(distance)
+        distances_to_return.append(distances_found)
+
+    return np.array(distances_to_return)
+
+
     return np.random.rand(X.shape[0], C.shape[0])
 
 
