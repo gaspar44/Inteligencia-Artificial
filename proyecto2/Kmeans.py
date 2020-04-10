@@ -32,10 +32,6 @@ class KMeans:
                     if matrix has more than 2 dimensions, the dimensionality of the smaple space is the length of
                     the last dimension
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
         if X.dtype != 'float':
             X = X.astype('float')
 
@@ -72,11 +68,6 @@ class KMeans:
         """
         Initialization of centroids
         """
-
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
         if self.options['km_init'].lower() == 'first':
             arrays_to_find = self.K - 1
             different_elements = self.X[0]
@@ -103,11 +94,18 @@ class KMeans:
         """        Calculates the closest centroid of all points in X
         and assigns each point to the closest centroid
         """
+
         #######################################################
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        self.labels = np.random.randint(self.K, size=self.X.shape[0])
+        distance_between_points = distance(self.X, self.centroids)
+        self.labels = np.zeros(self.X.shape[0])
+        for i in range(distance_between_points.shape[0]):
+                min_distance = np.amin(distance_between_points[i])
+                index_of_distance = np.where(distance_between_points[i] == min_distance)
+                self.labels[i] = index_of_distance[0][0]
+
 
     def get_centroids(self):
         """
@@ -187,9 +185,6 @@ def distance(X, C):
         distances_to_return.append(distances_found)
 
     return np.array(distances_to_return)
-
-
-    return np.random.rand(X.shape[0], C.shape[0])
 
 
 def get_colors(centroids):
