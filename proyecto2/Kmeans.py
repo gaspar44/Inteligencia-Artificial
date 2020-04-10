@@ -69,6 +69,7 @@ class KMeans:
         Initialization of centroids
         """
         if self.options['km_init'].lower() == 'first':
+            self.K_point_ID = np.array(self.K)
             arrays_to_find = self.K - 1
             different_elements = self.X[0]
             different_elements_list = [self.X[0].tolist()]
@@ -99,11 +100,11 @@ class KMeans:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        distance_between_points = distance(self.X, self.centroids)
+        self.distance_between_points = distance(self.X, self.centroids)
         self.labels = np.zeros(self.X.shape[0])
-        for i in range(distance_between_points.shape[0]):
-                min_distance = np.amin(distance_between_points[i])
-                index_of_distance = np.where(distance_between_points[i] == min_distance)
+        for i in range(self.distance_between_points.shape[0]):
+                min_distance = np.amin(self.distance_between_points[i])
+                index_of_distance = np.where(self.  distance_between_points[i] == min_distance)
                 self.labels[i] = index_of_distance[0][0]
 
 
@@ -115,7 +116,27 @@ class KMeans:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        pass
+        unique = np.unique(self.labels)
+        new_centroids = np.zeros( (self.centroids.shape[0], self.centroids.shape[1] ) )
+        dict_of_count = dict.fromkeys(unique)
+
+        for key in dict_of_count:
+            dict_of_count[key] = []
+
+        for i in range(self.X.shape[0]):
+            key_to_use = int(self.labels[i])
+            value_to_append = self.X[i]
+            dict_of_count[key_to_use].append(value_to_append.tolist())
+
+        for key in dict_of_count:
+            dict_of_count[key] = np.array(dict_of_count[key])
+            dict_of_count[key] = np.mean(dict_of_count[key], axis=0)
+            new_centroids[int(key)] = dict_of_count[key]
+
+        self.old_centroids = self.centroids
+        self.centroids = new_centroids
+
+
 
     def converges(self):
         """
