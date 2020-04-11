@@ -53,21 +53,21 @@ class TestCases(unittest.TestCase):
             # Compare new centroids
             np.testing.assert_array_equal(km.centroids, self.test_cases['get_centroid'][ix][1])
 
-    # def test_converges(self):
-    #     for ix, input in enumerate(self.test_cases['input']):
-    #         km = KMeans(input, self.test_cases['K'][ix])
-    #         km._init_centroids()
-    #         old_centroid, centroid, bool_value = self.test_cases['converge'][ix]
-    #         km.old_centroids, km.centroids = old_centroid, centroid
-    #         self.assertEqual(km.converges(), bool_value)
-    #
-    # def test_Kmeans(self):
-    #     for ix, input in enumerate(self.test_cases['input']):
-    #         km = KMeans(input, self.test_cases['K'][ix])
-    #         km.fit()
-    #         np.testing.assert_array_equal(km.centroids, self.test_cases['kmeans'][ix])
-    #
-    #
+    def test_converges(self):
+        for ix, input in enumerate(self.test_cases['input']):
+            km = KMeans(input, self.test_cases['K'][ix])
+            km._init_centroids()
+            old_centroid, centroid, bool_value = self.test_cases['converge'][ix]
+            km.old_centroids, km.centroids = old_centroid, centroid
+            self.assertEqual(km.converges(), bool_value)
+
+    def test_Kmeans(self):
+        for ix, input in enumerate(self.test_cases['input']):
+            km = KMeans(input, self.test_cases['K'][ix])
+            km.fit()
+            np.testing.assert_array_equal(km.centroids, self.test_cases['kmeans'][ix])
+
+
     # def test_find_bestK(self):
     #     for ix, input in enumerate(self.test_cases['input']):
     #         km = KMeans(input, self.test_cases['K'][ix])

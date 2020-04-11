@@ -100,11 +100,11 @@ class KMeans:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        self.distance_between_points = distance(self.X, self.centroids)
+        distance_between_points = distance(self.X, self.centroids)
         self.labels = np.zeros(self.X.shape[0])
-        for i in range(self.distance_between_points.shape[0]):
-                min_distance = np.amin(self.distance_between_points[i])
-                index_of_distance = np.where(self.  distance_between_points[i] == min_distance)
+        for i in range(distance_between_points.shape[0]):
+                min_distance = np.amin(distance_between_points[i])
+                index_of_distance = np.where(distance_between_points[i] == min_distance)
                 self.labels[i] = index_of_distance[0][0]
 
 
@@ -142,22 +142,22 @@ class KMeans:
         """
         Checks if there is a difference between current and old centroids
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        return True
+        return np.array_equal(self.centroids,self.old_centroids)
 
     def fit(self):
         """
         Runs K-Means algorithm until it converges or until the number
         of iterations is smaller than the maximum number of iterations.
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        pass
+        self._init_centroids()
+
+        limit_iterations = 0
+
+        while not self.converges() and limit_iterations < self.options["max_iter"]:
+            self.get_labels()
+            self.get_centroids()
+            limit_iterations = limit_iterations + 1
+
 
     def whitinClassDistance(self):
         """
