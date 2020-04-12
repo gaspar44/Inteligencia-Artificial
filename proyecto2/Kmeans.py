@@ -151,16 +151,14 @@ class KMeans:
         """
          returns the whithin class distance of the current clustering
         """
-        distance = 0
+        dist = 0
         for key in self.points_in_every_centroid:
             self.points_in_every_centroid[key] = np.array(self.points_in_every_centroid[key])
 
-        for i in range(self.centroids.shape[0]):
-            centroid_to_use = self.centroids[i]
-            for element in (self.points_in_every_centroid[i]):
-                distance = distance + (np.linalg.norm(centroid_to_use - element) ** 2)
+        for key in self.points_in_every_centroid:
+            dist = dist + (np.linalg.norm(self.points_in_every_centroid[key] - self.centroids[key]) ** 2)
 
-        return distance / self.X.shape[0]
+        return dist / self.X.shape[0]
 
     def find_bestK(self, max_K):
         """
@@ -169,21 +167,22 @@ class KMeans:
 
         if self.options['fitting'] == 'WCD':
             wcd = np.zeros(max_K + 1)
-            k_founds = np.zeros(max_K + 1)
 
             for i in range(2, max_K + 1):
                 self.K = i
                 self.fit()
-                wcd[i - 2] = self.whitinClassDistance()
-                k_founds[i - 2] = i
-
-            for i in range(1, max_K):
-                dec = wcd[i]/wcd[i - 1]
-                dec = 100 * dec
-                if dec < 0.2:
-                    self.K = k_founds[i]
+                wcd[i] = self.whitinClassDistance()
 
 
+            initial_value = 100
+            for i in range(3, max_K + 1):
+                new_dec = wcd[i]/wcd[i - 1]
+                new_dec = new_dec * 100
+                verga = initial_value - new_dec
+
+                if verga < 20:
+                    self.K = i - 1
+                    return
 
 
 def distance(X, C):
@@ -198,11 +197,9 @@ def distance(X, C):
         i-th point of the first set an the j-th point of the second set
     """
 
-
-
     distances_to_return = np.linalg.norm(C[0] - X, axis=1)
 
-    for j in range(1,C.shape[0]):
+    for j in range(1, C.shape[0]):
          distance = np.linalg.norm(C[j] - X, axis=1)
          distances_to_return = np.vstack([distances_to_return, distance])
 
@@ -223,4 +220,5 @@ def get_colors(centroids):
     ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
     ##  AND CHANGE FOR YOUR OWN CODE
     #########################################################
+
     return list(utils.colors)
