@@ -215,10 +215,11 @@ def get_colors(centroids):
     Returns:
         lables: list of K labels corresponding to one of the 11 basic colors
     """
+    colors_probablitys = utils.get_color_prob(centroids)
+    colors = np.argmax(colors_probablitys,axis=1)
+    list_to_return = []
 
-    #########################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #########################################################
+    for probability in colors:
+        list_to_return.append(utils.colors[probability])
 
-    return list(utils.colors)
+    return list_to_return
