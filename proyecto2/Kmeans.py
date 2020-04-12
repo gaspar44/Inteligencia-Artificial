@@ -94,12 +94,10 @@ class KMeans:
         """        Calculates the closest centroid of all points in X
         and assigns each point to the closest centroid
         """
+
         distance_between_points = distance(self.X, self.centroids)
-        self.labels = np.zeros(self.X.shape[0])
-        for i in range(distance_between_points.shape[0]):
-            min_distance = np.amin(distance_between_points[i])
-            index_of_distance = np.where(distance_between_points[i] == min_distance)
-            self.labels[i] = index_of_distance[0][0]
+        self.labels = distance_between_points.argmin(axis=1)
+
 
     def get_centroids(self):
         """
@@ -132,6 +130,7 @@ class KMeans:
         """
         Checks if there is a difference between current and old centroids
         """
+
         return np.array_equal(self.centroids, self.old_centroids)
 
     def fit(self):
@@ -167,12 +166,24 @@ class KMeans:
         """
          sets the best k anlysing the results up to 'max_K' clusters
         """
-        wcd = np.zeros(max_K + 1)
 
-        for i in range(2, max_K + 1):
-            self.K = i
-            self.fit()
-            wcd[i - 2] = self.whitinClassDistance()
+        if self.options['fitting'] == 'WCD':
+            wcd = np.zeros(max_K + 1)
+            k_founds = np.zeros(max_K + 1)
+
+            for i in range(2, max_K + 1):
+                self.K = i
+                self.fit()
+                wcd[i - 2] = self.whitinClassDistance()
+                k_founds[i - 2] = i
+
+            for i in range(1, max_K):
+                dec = wcd[i]/wcd[i - 1]
+                dec = 100 * dec
+                if dec < 0.2:
+                    self.K = k_founds[i]
+
+
 
 
 def distance(X, C):
@@ -186,15 +197,16 @@ def distance(X, C):
         dist: PxK numpy array position ij is the distance between the
         i-th point of the first set an the j-th point of the second set
     """
-    distances_to_return = []
-    for i in range(X.shape[0]):
-        distances_found = []
-        for j in range(C.shape[0]):
-            distance = np.linalg.norm(C[j] - X[i])
-            distances_found.append(distance)
-        distances_to_return.append(distances_found)
 
-    return np.array(distances_to_return)
+
+
+    distances_to_return = np.linalg.norm(C[0] - X, axis=1)
+
+    for j in range(1,C.shape[0]):
+         distance = np.linalg.norm(C[j] - X, axis=1)
+         distances_to_return = np.vstack([distances_to_return, distance])
+
+    return distances_to_return.transpose()
 
 
 def get_colors(centroids):
