@@ -4,6 +4,9 @@ __group__ = 'DM.18'
 import numpy as np
 import math
 import operator
+import json
+
+from jupyter_client.tests.utils import test_env
 from scipy.spatial.distance import cdist
 
 class KNN:
@@ -25,8 +28,11 @@ class KNN:
         if train_data.dtype != 'float':
             train_data = train_data.astype('float')
 
-        if len(train_data.shape) == 4:
-            self.train_data = train_data.reshape(train_data.shape[0], train_data.shape[1]*train_data.shape[2]*train_data.shape[3])
+        second_dimension = 1
+        for i in range(1, len(train_data.shape)):
+            second_dimension = second_dimension * train_data.shape[i]
+
+        self.train_data = train_data.reshape(train_data.shape[0], second_dimension)
 
 
     def get_k_neighbours(self, test_data, k):
@@ -37,11 +43,19 @@ class KNN:
         :return: the matrix self.neighbors is created (NxK)
                  the ij-th entry is the j-th nearest train point to the i-th test point
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.neighbors = np.random.randint(k, size=[test_data.shape[0],k])
+        second_dimension = 1
+        for i in range(1, len(test_data.shape)):
+            second_dimension = second_dimension * test_data.shape[i]
+
+        test_data_to_use  = test_data.reshape(test_data.shape[0], second_dimension)
+        distances_between_points = cdist(test_data_to_use,self.train_data)
+        distances_between_points = np.resize(distances_between_points,(distances_between_points.shape[0], k))
+
+        #self.neighbors
+        print(k)
+
+        #self.neighbors = np.random.randint(k, size=[test_data.shape[0],k])
+
 
 
     def get_class(self):
