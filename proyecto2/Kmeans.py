@@ -1,4 +1,4 @@
-__authors__ = ['1499617']
+__authors__ = ['1499617','1456140','1456845']
 __group__ = 'DM.18'
 
 from calendar import different_locale
