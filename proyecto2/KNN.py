@@ -48,14 +48,18 @@ class KNN:
             second_dimension = second_dimension * test_data.shape[i]
 
         test_data_to_use  = test_data.reshape(test_data.shape[0], second_dimension)
-        distances_between_points = cdist(test_data_to_use,self.train_data)
-        distances_between_points = np.resize(distances_between_points,(distances_between_points.shape[0], k))
+        distances_between_points = cdist(test_data_to_use, self.train_data)
+        index_of_minimun = distances_between_points.argsort()
+        index_of_minimun = index_of_minimun[0:, 0:k]
+        arrayToConvert = []
 
-        #self.neighbors
-        print(k)
+        for i in range(index_of_minimun.shape[0]):
+            helper = []
+            for j in range(index_of_minimun.shape[1]):
+                helper.append(self.labels[index_of_minimun[i][j]])
+            arrayToConvert.append(helper)
 
-        #self.neighbors = np.random.randint(k, size=[test_data.shape[0],k])
-
+        self.neighbors = np.array(arrayToConvert)
 
 
     def get_class(self):
