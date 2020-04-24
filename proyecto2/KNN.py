@@ -5,8 +5,6 @@ import numpy as np
 import math
 import operator
 import json
-
-from jupyter_client.tests.utils import test_env
 from scipy.spatial.distance import cdist
 
 class KNN:
@@ -92,7 +90,6 @@ class KNN:
                 index_where_the_value_appears_firts_time = index[values_where_max_starts[0]].min()
 
             list_to_return_value.append(self.neighbors[i][index_where_the_value_appears_firts_time])
-
 
         return np.array(list_to_return_value)#, np.array(value_counts)
 

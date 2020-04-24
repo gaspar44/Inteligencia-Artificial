@@ -6,8 +6,6 @@ import numpy as np
 import KNN as k
 from KNN import *
 from utils import *
-from skimage import io
-
 
 class TestCases(unittest.TestCase):
 
