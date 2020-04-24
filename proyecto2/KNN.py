@@ -74,7 +74,23 @@ class KNN:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        return np.random.randint(10, size=self.neighbors.size), np.random.random(self.neighbors.size)
+        list_to_return_value = []
+        value_counts = []
+
+        for i in range(self.neighbors.shape[0]):
+            unique, counts = np.unique(self.neighbors[i], return_counts=True)
+            value_counts.append(counts)
+            count_as_list = counts.tolist()
+
+            if any(count_as_list.count(count_as_list[x]) != 1 for x in range(len(count_as_list))):
+                list_to_return_value.append(self.neighbors[i][0])
+
+            else:
+                max_value_in_row_index = counts.argmax()
+                list_to_return_value.append(unique[max_value_in_row_index])
+
+
+        return np.array(list_to_return_value)#, np.array(value_counts)
 
 
     def predict(self, test_data, k):
