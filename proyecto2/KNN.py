@@ -78,16 +78,20 @@ class KNN:
         value_counts = []
 
         for i in range(self.neighbors.shape[0]):
-            unique, counts = np.unique(self.neighbors[i], return_counts=True)
+            unique,index,counts = np.unique(self.neighbors[i], return_counts=True,return_index=True)
             value_counts.append(counts)
-            count_as_list = counts.tolist()
+            values_where_max_starts = np.where(counts == np.amax(counts))
 
-            if any(count_as_list.count(count_as_list[x]) != 1 for x in range(len(count_as_list))):
-                list_to_return_value.append(self.neighbors[i][0])
+            if values_where_max_starts[0].size == index.size:
+                index_where_the_value_appears_firts_time = index.min()
+
+            elif values_where_max_starts[0].size == 1:
+                index_where_the_value_appears_firts_time = index[values_where_max_starts[0][0]]
 
             else:
-                max_value_in_row_index = counts.argmax()
-                list_to_return_value.append(unique[max_value_in_row_index])
+                index_where_the_value_appears_firts_time = index[values_where_max_starts[0]].min()
+
+            list_to_return_value.append(self.neighbors[i][index_where_the_value_appears_firts_time])
 
 
         return np.array(list_to_return_value)#, np.array(value_counts)
