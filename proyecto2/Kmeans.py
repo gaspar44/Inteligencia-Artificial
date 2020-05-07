@@ -147,6 +147,8 @@ class KMeans:
             self.get_centroids()
             limit_iterations = limit_iterations + 1
 
+        return limit_iterations
+
     def whitinClassDistance(self):
         """
          returns the whithin class distance of the current clustering
