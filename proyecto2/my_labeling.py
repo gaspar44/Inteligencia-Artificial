@@ -4,9 +4,10 @@ __group__ = 'TO_BE_FILLED'
 import numpy as np
 import Kmeans
 import KNN
-from utils_data import read_dataset, visualize_k_means, visualize_retrieval
+from utils_data import read_dataset, visualize_k_means, visualize_retrieval,Plot3DCloud
 import matplotlib.pyplot as plt
 import time
+import random
 
 # Analisis cuantitativo
 def kmeans_statistics(images,KMax):
@@ -34,18 +35,32 @@ if __name__ == '__main__':
     #List with all the existant classes
     classes = list(set(list(train_class_labels) + list(test_class_labels)))
 
-
     K_MAX = 11
-    for i in range(1):
-        times, iterations, WCD = kmeans_statistics(train_imgs[0], K_MAX)
-        # plt.scatter([2, 3, 4, 5, 6, 7, 8, 9, 10], prueba1)
-        # plt.xlabel("K")
-        # plt.ylabel("time")
-        # plt.show()
-        plt.scatter(list(range(2, K_MAX)), WCD)
+    times_to_graph = []
+    iterations_to_graph = []
+    WCDs_to_graph = []
+    ## Default kmeans time: 28 segs
+    for i in range(10):
+        numberToUse = random.randint(0, train_imgs.shape[0])
+        times, iterations, WCD = kmeans_statistics(train_imgs[numberToUse], K_MAX)
+        times_to_graph.append(times)
+        iterations_to_graph.append(iterations)
+        WCDs_to_graph.append(WCD)
+
+    for i in range(10):
+        plt.scatter(times_to_graph[i], iterations_to_graph[i])
+        plt.legend()
+        plt.title("iterations VS time")
+        plt.xlabel("time/seg)")
+        plt.ylabel("iterations")
+        plt.savefig("iterations.png")
+
+    plt.clf()
+
+    for i in range(10):
+        plt.scatter(list(range(2, K_MAX)), WCDs_to_graph[i])
         plt.xlabel("K")
         plt.ylabel("WCD")
-        #plt.show()
         plt.savefig("wcd.png")
 
 ## You can start coding your functions here
