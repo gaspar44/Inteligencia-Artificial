@@ -33,7 +33,7 @@ class KNN:
         self.train_data = train_data.reshape(train_data.shape[0], second_dimension)
 
 
-    def get_k_neighbours(self, test_data, k):
+    def get_k_neighbours(self, test_data, k,distance_type=None):
         """
         given a test_data matrix calculates de k nearest neighbours at each point (row) of test_data on self.neighbors
         :param test_data:   array that has to be shaped to a NxD matrix ( N points in a D dimensional space)
@@ -41,12 +41,13 @@ class KNN:
         :return: the matrix self.neighbors is created (NxK)
                  the ij-th entry is the j-th nearest train point to the i-th test point
         """
+
         second_dimension = 1
         for i in range(1, len(test_data.shape)):
             second_dimension = second_dimension * test_data.shape[i]
 
         test_data_to_use  = test_data.reshape(test_data.shape[0], second_dimension)
-        distances_between_points = cdist(test_data_to_use, self.train_data)
+        distances_between_points = cdist(test_data_to_use, self.train_data) if distance_type is None else cdist(test_data_to_use, self.train_data, distance_type)
         index_of_minimun = distances_between_points.argsort()
         index_of_minimun = index_of_minimun[0:, 0:k]
         arrayToConvert = []
@@ -94,12 +95,12 @@ class KNN:
         return np.array(list_to_return_value)#, np.array(value_counts)
 
 
-    def predict(self, test_data, k):
+    def predict(self, test_data, k,distance_type=None):
         """
         predicts the class at which each element in test_data belongs to
         :param test_data: array that has to be shaped to a NxD matrix ( N points in a D dimensional space)
         :param k:         :param k:  the number of neighbors to look at
         :return: the output form get_class (2 Nx1 vector, 1st the classm 2nd the  % of votes it got
         """
-        self.get_k_neighbours(test_data,k)
+        self.get_k_neighbours(test_data,k,distance_type)
         return self.get_class()
