@@ -4,4 +4,6 @@
 */.vscode/*
 */python/*
 proyecto2/images/*
+proyecto2/resultados/*
+proyecto2/*.png
 */__pycache__/*

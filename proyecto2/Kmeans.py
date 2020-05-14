@@ -222,6 +222,7 @@ def get_colors(centroids):
     list_to_return = []
 
     for probability in colors:
-        list_to_return.append(utils.colors[probability])
+        if probability not in list_to_return:
+            list_to_return.append(utils.colors[probability])
 
     return list_to_return
