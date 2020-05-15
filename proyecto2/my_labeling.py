@@ -136,12 +136,13 @@ def get_kmeans_accuracy(kmeans_labels_test, images, KMax,max_images_to_use):
             used_kmeans_images.append(number_to_use)
 
     time1 = time.time()
-    for number_to_use in range(len(used_kmeans_images)):
+    for number_to_use in used_kmeans_images:
         accerted_ratios = []
 
         for j in range(2, KMax):
             km = Kmeans.KMeans(images[number_to_use], j)
             km.fit()
+            #visualize_k_means(km,images[number_to_use].shape)
             returned_from_kmeans_color_labels = Kmeans.get_colors(km.centroids)
             accerted = get_color_accuracy(kmeans_labels_test[number_to_use], returned_from_kmeans_color_labels)
             accerted_ratios.append(accerted)
@@ -181,8 +182,8 @@ if __name__ == '__main__':
         print("folder " + output_folder + " created for output")
         os.mkdir(output_folder)
 
-    # get_statistics(train_imgs, max_images_to_use)
-    # get_knn_accuracy_(train_imgs, train_class_labels, KMAX)
+    #get_statistics(train_imgs, max_images_to_use)
+    #get_knn_accuracy_(train_imgs, train_class_labels, KMAX)
 
     get_kmeans_accuracy(test_color_labels, test_imgs, KMAX, max_images_to_use)
 

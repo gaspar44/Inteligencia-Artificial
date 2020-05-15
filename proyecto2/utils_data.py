@@ -4,6 +4,8 @@ import os
 from PIL import Image
 import matplotlib.pyplot as plt
 import math
+from mpl_toolkits.mplot3d import Axes3D # <--- This is important for 3d plotting
+
 def read_dataset(ROOT_FOLDER = './images/', gt_json='./test/gt.json', w=60, h=80):
     """
         reads the dataset (train and test), returns the images and labels (class and colors) for both sets
