@@ -67,7 +67,7 @@ def get_statistics(train_imgs, number_of_images_to_use):
 def get_shape_accuracy(knn_labels, test_labels):
     equals = np.char.equal(knn_labels, test_labels)
     _, counts = np.unique(equals, return_counts=True)
-    return (counts[1] / knn_labels.shape[0]) * 100
+    return (counts[1] / knn_labels.shape[0]) * 100, equals
 
 
 def get_color_accuracy(kmeans_labels_test, returned_from_kmeans_color_labels):
@@ -112,7 +112,7 @@ def get_knn_accuracy_(train_imgs, train_class_labels, K_max):
 
         for i in range(2, K_max):
             labels = knn.predict(test_imgs, i, distance)
-            asserted_label_percentaje = get_shape_accuracy(labels, test_class_labels)
+            asserted_label_percentaje, equals = get_shape_accuracy(labels, test_class_labels)
             percentags_returned.append(asserted_label_percentaje)
 
         print(distance + " finished in: ", time.time() - time1)
@@ -131,7 +131,7 @@ def get_kmeans_accuracy(kmeans_labels_test, images, KMax,max_images_to_use):
     accerted_ratios_for_all_images = []
 
     if len(used_kmeans_images) != max_images_to_use:
-        for i in range(len(used_kmeans_images),max_images_to_use):
+        for i in range(len(used_kmeans_images), max_images_to_use):
             number_to_use = random.randint(0, images.shape[0])
             used_kmeans_images.append(number_to_use)
 
@@ -142,7 +142,6 @@ def get_kmeans_accuracy(kmeans_labels_test, images, KMax,max_images_to_use):
         for j in range(2, KMax):
             km = Kmeans.KMeans(images[number_to_use], j)
             km.fit()
-            #visualize_k_means(km,images[number_to_use].shape)
             returned_from_kmeans_color_labels = Kmeans.get_colors(km.centroids)
             accerted = get_color_accuracy(kmeans_labels_test[number_to_use], returned_from_kmeans_color_labels)
             accerted_ratios.append(accerted)
@@ -158,6 +157,15 @@ def get_kmeans_accuracy(kmeans_labels_test, images, KMax,max_images_to_use):
         plt.savefig(output_folder + "kmeans Accerted.png")
     
     print(time.time() - time1)
+
+
+def retrieval_knn_shape(train_imgs, train_class_labels,K_max):
+    knn = KNN.KNN(train_imgs, train_class_labels)
+
+    for i in range(2, K_max):
+        labels = knn.predict(test_imgs, i)
+        asserted_label_percentaje, equals = get_shape_accuracy(labels, test_class_labels)
+        visualize_retrieval(test_imgs, 30, labels[:30], equals[:30], title="KNN shape with K: " + str(i))
 
 
 if __name__ == '__main__':
@@ -182,9 +190,11 @@ if __name__ == '__main__':
         print("folder " + output_folder + " created for output")
         os.mkdir(output_folder)
 
-    #get_statistics(train_imgs, max_images_to_use)
+    # Cuantitativo
+    #get_statistics(test_imgs, max_images_to_use)
     #get_knn_accuracy_(train_imgs, train_class_labels, KMAX)
-
     get_kmeans_accuracy(test_color_labels, test_imgs, KMAX, max_images_to_use)
 
-## You can start coding your functions here
+    # Cualitativo
+    #retrieval_knn_shape(train_imgs, train_class_labels,KMAX)
+

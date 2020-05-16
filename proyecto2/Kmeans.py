@@ -175,7 +175,6 @@ class KMeans:
                 self.fit()
                 wcd[i] = self.whitinClassDistance()
 
-
             initial_value = 100
             for i in range(3, max_K + 1):
                 new_dec = wcd[i]/wcd[i - 1]

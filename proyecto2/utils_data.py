@@ -96,7 +96,11 @@ def visualize_retrieval(imgs, topN, info=None, ok=None, title='', query=None):
         if info is not None:
             plt.title(f'{info[i]}', fontsize=8)
     plt.gcf().suptitle(title)
-    plt.show()
+
+    if title is not None:
+        plt.savefig("./resultados/" + title + ".png")
+    else:
+        plt.show()
 
 
 # Visualize k-mean with 3D plot
@@ -137,7 +141,7 @@ def visualize_k_means(kmeans, img_shape):
     plt.title('kmeans')
 
     Plot3DCloud(kmeans, 1, 3, 3)
-    plt.title('núvol de punts')
-    plt.show()
+    plt.title('núvol de punts, K =' + str(kmeans.K))
+    plt.savefig("./resultados/" + "kmeans with K " + str(kmeans.K) + ".png")
 
 
