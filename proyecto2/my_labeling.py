@@ -1,5 +1,5 @@
-__authors__ = 'TO_BE_FILLED'
-__group__ = 'TO_BE_FILLED'
+__authors__ = "1499617","1456140"
+__group__ = 'DM.18'
 
 from itertools import count
 
