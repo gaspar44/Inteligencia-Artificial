@@ -5,6 +5,7 @@ from calendar import different_locale
 
 import numpy as np
 import utils
+import random
 
 
 class KMeans:
@@ -89,6 +90,56 @@ class KMeans:
                                                                         self.X.shape[1])
                             self.old_centroids = None
                             return
+
+        elif self.options["km_init"].lower() == "random":
+            arrays_to_find = self.K - 1
+            random_choice = random.randint(0, self.X.shape[0] - 1)
+            different_elements = self.X[random_choice]
+            different_elements_list = [self.X[random_choice].tolist()]
+
+            for i in range(1, self.X.shape[0]):
+                random_choice = random.randint(0, self.X.shape[0] - 1)
+                mask = np.array_equal(different_elements, self.X[random_choice])
+
+                if not np.all(mask):
+                    element_as_list = self.X[random_choice].tolist()
+
+                    if element_as_list not in different_elements_list:
+                        different_elements_list.append(element_as_list)
+                        different_elements = np.append(different_elements, self.X[random_choice])
+                        arrays_to_find = arrays_to_find - 1
+
+                        if arrays_to_find <= 0:
+                            self.centroids = different_elements.reshape(different_elements.shape[0] // self.X.shape[1],
+                                                                        self.X.shape[1])
+                            self.old_centroids = None
+                            return
+
+        elif self.options["km_init"].lower() == "last":
+            self.K_point_ID = np.array(self.K)
+            arrays_to_find = self.K - 1
+            different_elements = self.X[self.X.shape[0] - 1]
+            different_elements_list = [self.X[self.X.shape[0] - 1].tolist()]
+
+            for i in range(self.X.shape[0] - 1, 0, -1):
+                mask = np.array_equal(different_elements, self.X[i])
+
+                if not np.all(mask):
+                    element_as_list = self.X[i].tolist()
+
+                    if element_as_list not in different_elements_list:
+                        different_elements_list.append(element_as_list)
+                        different_elements = np.append(different_elements, self.X[i])
+                        arrays_to_find = arrays_to_find - 1
+
+                        if arrays_to_find <= 0:
+                            self.centroids = different_elements.reshape(different_elements.shape[0] // self.X.shape[1],
+                                                                        self.X.shape[1])
+                            self.old_centroids = None
+                            return
+
+
+
 
     def get_labels(self):
         """        Calculates the closest centroid of all points in X
