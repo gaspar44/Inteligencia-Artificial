@@ -1,4 +1,4 @@
-__authors__ = "1499617","1456140"
+__authors__ = ["1499617","1456140"]
 __group__ = 'DM.18'
 
 from itertools import count
