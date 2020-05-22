@@ -113,19 +113,27 @@ def get_knn_accuracy_(train_imgs, train_class_labels, K_max):
 
     for distance in distances_to_use:
         time.sleep(3)
-        percentags_returned = []
+        percentages_returned = []
         time1 = time.time()
 
         for i in range(2, K_max):
             labels = knn.predict(test_imgs, i, distance)
             asserted_label_percentaje, equals = get_shape_accuracy(labels, test_class_labels)
-            percentags_returned.append(asserted_label_percentaje)
+            plt.clf()
+            plt.scatter(test_class_labels.tolist(), labels.tolist())
+            plt.title("expected shape VS actual shape with K = " + str(i))
+            plt.xlabel("test class labels")
+            plt.ylabel("asserted labels")
+            plt.grid()
+            plt.savefig(output_folder + "formas encontradasK=" + str(i) + distance + ".png")
+
+            percentages_returned.append(asserted_label_percentaje)
 
         print(distance + " finished in: ", time.time() - time1)
 
         # Graph
         plt.clf()
-        plt.scatter(list(range(2, K_max)), percentags_returned)
+        plt.scatter(list(range(2, K_max)), percentages_returned)
         plt.title("KNN % " + distance + " success")
         plt.xlabel("K")
         plt.ylabel("%")

@@ -77,7 +77,7 @@ class KNN:
         value_counts = []
 
         for i in range(self.neighbors.shape[0]):
-            unique,index,counts = np.unique(self.neighbors[i], return_counts=True, return_index=True)
+            unique, index, counts = np.unique(self.neighbors[i], return_counts=True, return_index=True)
             value_counts.append(counts)
             values_where_max_starts = np.where(counts == np.amax(counts))
 
